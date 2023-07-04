@@ -1,5 +1,5 @@
 <h1 align="center">
-  Safety Test Service </br>
+  Safety Test App </br>
   <img src="https://github.com/zulfikar4568/PCI.SafetyTest/actions/workflows/dotnet.yml/badge.svg" />
   <a href="https://github.com/zulfikar4568/PCI.SafetyTest/releases/latest"><img src="https://img.shields.io/github/release/zulfikar4568/PCI.SafetyTest.svg" /></a>
   <a href="https://github.com/zulfikar4568/PCI.SafetyTest/blob/master/LICENSE"><img src="https://img.shields.io/github/license/zulfikar4568/PCI.SafetyTest.svg" /></a>
