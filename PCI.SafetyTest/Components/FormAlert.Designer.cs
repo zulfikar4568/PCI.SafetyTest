@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormAlert));
             this.btnExit = new FontAwesome.Sharp.IconPictureBox();
             this.LineAlertBox = new System.Windows.Forms.Panel();
             this.labelTextAlertBox = new System.Windows.Forms.Label();
@@ -117,6 +118,7 @@
             this.Controls.Add(this.labelTitleAlertBox);
             this.Controls.Add(this.PicAlertBox);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "FormAlert";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "FormAlert";

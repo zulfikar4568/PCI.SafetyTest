@@ -6,6 +6,7 @@ using Quartz.Logging;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Linq;
 using System.Net.Sockets;
 using System.Reflection;
@@ -25,6 +26,8 @@ namespace PCI.SafetyTest
             containerBuilder.RegisterModule(new Util.Util());
             containerBuilder.RegisterType<Main>().AsSelf();
             containerBuilder.RegisterType<Scheduler>().AsSelf();
+            containerBuilder.RegisterType<ServiceMain>().As<ServiceMain>();
+            containerBuilder.RegisterType<BackgroundWorker>().AsSelf();
 
             // configure and register Quartz
             var schedulerConfig = new NameValueCollection {

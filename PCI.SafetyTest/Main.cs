@@ -29,8 +29,7 @@ namespace PCI.SafetyTest
             #endregion
 
             Rectangle workingArea = Screen.GetWorkingArea(this);
-            this.Location = new Point(workingArea.Right - Size.Width,
-                                      workingArea.Bottom - Size.Height);
+            this.Location = new Point(0, workingArea.Bottom - Size.Height);
         }
         //Overrride methods
         protected override void WndProc(ref Message m)
@@ -158,6 +157,15 @@ namespace PCI.SafetyTest
         private void Main_Load(object sender, EventArgs e)
         {
             formSize = this.ClientSize;
+        }
+
+        public void SetProgressBar(int value)
+        {
+            progressBar.Value = value;
+        }
+        public void SetLabelMessage(string message)
+        {
+            labelMsg.Text = message;
         }
     }
 }

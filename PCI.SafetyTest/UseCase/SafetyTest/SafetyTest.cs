@@ -1,5 +1,6 @@
 ﻿using Camstar.WCF.ObjectStack;
 using Camstar.WCF.Services;
+using PCI.SafetyTest.Components;
 using PCI.SafetyTest.Config;
 using PCI.SafetyTest.Entity;
 using PCI.SafetyTest.Repository.Opcenter;
@@ -7,6 +8,7 @@ using PCI.SafetyTest.Util;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.IO;
@@ -14,24 +16,35 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace PCI.SafetyTest.UseCase
 {
     public interface ISafetyTest : Abstraction.IUseCase
     {
-        new void MainLogic(string delimiter, string sourceFile);
+        new void MainLogic(string delimiter, string sourceFile, Main mainForm);
     }
     public class SafetyTest : ISafetyTest
     {
         private readonly Repository.ISafetyTest _repository;
         private readonly Util.IProcessFile _processFile;
         private readonly ContainerTransaction _containerTransaction;
-        public SafetyTest(Repository.ISafetyTest repository, Util.IProcessFile processFile, ContainerTransaction containerTransaction)
+        private BackgroundWorker _backgroundWorker;
+        private Main _mainForm;
+        public SafetyTest(Repository.ISafetyTest repository, Util.IProcessFile processFile, ContainerTransaction containerTransaction, BackgroundWorker backgroundWorker)
         {
             _repository = repository;
             _processFile = processFile;
             _containerTransaction = containerTransaction;
+            _backgroundWorker = backgroundWorker;
+
+            // Set Handler for Background Worker
+            _backgroundWorker.WorkerReportsProgress = true;
+            _backgroundWorker.DoWork += DoWork;
+            _backgroundWorker.RunWorkerCompleted += RunWorkerComplete;
+            _backgroundWorker.ProgressChanged += ProgressChanged;
         }
 
         public float FilterTheValue(string value)
@@ -64,7 +77,7 @@ namespace PCI.SafetyTest.UseCase
             }
 
             // Try logging
-            EventLogUtil.LogEvent($"Data CSV stored into dictionary got {results.Count}!", EventLogEntryType.Information, 6);
+            Logging.UpdateMessage(_mainForm, $"Data CSV stored into dictionary got {results.Count}!");
 
             return results;
         }
@@ -83,48 +96,106 @@ namespace PCI.SafetyTest.UseCase
             }
 
             // Try logging
-            EventLogUtil.LogEvent($"Combine data got {dataPointDetails.Count} combined and store in dictionary!", EventLogEntryType.Information, 6);
+            Logging.UpdateMessage(_mainForm, $"Combine data got {dataPointDetails.Count} combined and store in dictionary!");
 
             return dataPointDetails.ToArray();
         }
 
-        public void MainLogic(string delimiter, string sourceFile)
+        public void MainLogic(string delimiter, string sourceFile, Main mainForm)
         {
             if (!_processFile.IsFileExists(sourceFile)) return;
+            _mainForm = mainForm;
 
-            List<Entity.SafetyTest> data = _repository.Reading(delimiter, sourceFile);
-            var serialNumber = System.IO.Path.GetFileNameWithoutExtension(sourceFile);
-            var dataPointDetails = CombineDataPoint(GetLogValue(data), _repository.GetDataCollectionList());
+            if (!_backgroundWorker.IsBusy) _backgroundWorker.RunWorkerAsync(new MainLogic() { Delimiter = delimiter, SourceFile = sourceFile});
+        }
+        private void RunWorkerComplete(object sender, RunWorkerCompletedEventArgs e)
+        {
+            Thread.Sleep(1500);
+            Logging.UpdateProgressBar(_mainForm, 0);
+            Logging.UpdateMessage(_mainForm, "Ready!");
+        }
+        private void DoWork(object sender, DoWorkEventArgs e)
+        {
+            BringToFront();
+
+            BackgroundWorker worker = sender as BackgroundWorker;
+            // Do some Logic in here!
+            var mainLogicData = (MainLogic)e.Argument;
+            Logging.UpdateMessage(_mainForm, $"Reading CSV File {mainLogicData.SourceFile}");
+            List<Entity.SafetyTest> data = _repository.Reading(mainLogicData.Delimiter, mainLogicData.SourceFile);
+            worker.ReportProgress(10);
+
+            var serialNumber = System.IO.Path.GetFileNameWithoutExtension(mainLogicData.SourceFile);
+            worker.ReportProgress(20);
+
+            var csvDataInDictionary = GetLogValue(data);
+            worker.ReportProgress(45);
+
+            var dataPointDetails = CombineDataPoint(csvDataInDictionary, _repository.GetDataCollectionList());
+            worker.ReportProgress(70);
+
+            // Status Field
+            EventLogEntryType result = EventLogEntryType.Error;
+            string msg;
 
             if (dataPointDetails.Length > 0)
             {
+                Logging.UpdateMessage(_mainForm, $"Doing Transaction for unit {serialNumber}");
                 try
                 {
-                    bool result = _containerTransaction.ExecuteCollectData(serialNumber, AppSettings.UserDataCollectionSafetyTestName, AppSettings.UserDataCollectionSafetyTestRevision, dataPointDetails);
-                    if (!result)
+                    bool txnResult = _containerTransaction.ExecuteCollectData(serialNumber, AppSettings.UserDataCollectionSafetyTestName, AppSettings.UserDataCollectionSafetyTestRevision, dataPointDetails);
+                    if (!txnResult)
                     {
-                        EventLogUtil.LogEvent("Retry Collect Data x2", System.Diagnostics.EventLogEntryType.Information, 3);
-                        result = _containerTransaction.ExecuteCollectData(serialNumber, AppSettings.UserDataCollectionSafetyTestName, AppSettings.UserDataCollectionSafetyTestRevision, dataPointDetails);
-                        if (!result)
+                        Logging.UpdateMessage(_mainForm, $"Retry Collect Data x2 for unit {serialNumber}");
+                        txnResult = _containerTransaction.ExecuteCollectData(serialNumber, AppSettings.UserDataCollectionSafetyTestName, AppSettings.UserDataCollectionSafetyTestRevision, dataPointDetails);
+                        if (!txnResult)
                         {
-                            EventLogUtil.LogEvent("Retry Collect Data x3", System.Diagnostics.EventLogEntryType.Information, 3);
-                            result = _containerTransaction.ExecuteCollectData(serialNumber, AppSettings.UserDataCollectionSafetyTestName, AppSettings.UserDataCollectionSafetyTestRevision, dataPointDetails);
-                            if (!result) MovingFileFailed(System.IO.Path.GetFileName(sourceFile));
+                            Logging.UpdateMessage(_mainForm, $"Retry Collect Data x3 for unit {serialNumber}");
+                            txnResult = _containerTransaction.ExecuteCollectData(serialNumber, AppSettings.UserDataCollectionSafetyTestName, AppSettings.UserDataCollectionSafetyTestRevision, dataPointDetails);
+                            if (!txnResult) MovingFileFailed(System.IO.Path.GetFileName(mainLogicData.SourceFile));
                         }
                     }
-                    if (result) EventLogUtil.LogEvent("Success when doing Transaction Collect Data");
+                    if (txnResult)
+                    {
+                        result = EventLogEntryType.Information;
+                        msg = $"Success when doing Transaction Collect Data {serialNumber}";
+                    } else
+                    {
+                        result = EventLogEntryType.Error;
+                        msg = $"Failed when doing Transaction Collect Data {serialNumber}";
+                    }
                 }
                 catch (Exception ex)
                 {
                     ex.Source = AppSettings.AssemblyName == ex.Source ? MethodBase.GetCurrentMethod().Name : MethodBase.GetCurrentMethod().Name + "." + ex.Source;
                     EventLogUtil.LogErrorEvent(ex.Source, ex.Message);
+                    result = EventLogEntryType.Error;
+                    msg = "Please check event log in event viewer for error!";
                 }
-                MovingFileSuccess(System.IO.Path.GetFileName(sourceFile));
-            } else
-            {
-                EventLogUtil.LogEvent("There's no data Model match!", System.Diagnostics.EventLogEntryType.Warning, 3);
-                MovingFileFailed(System.IO.Path.GetFileName(sourceFile));
+                MovingFileSuccess(System.IO.Path.GetFileName(mainLogicData.SourceFile));
             }
+            else
+            {
+                result = EventLogEntryType.Warning;
+                msg = $"There's no data Model match for {serialNumber}!";
+                MovingFileFailed(System.IO.Path.GetFileName(mainLogicData.SourceFile));
+            }
+
+            worker.ReportProgress(100);
+            Logging.TransactionLogging(result, _mainForm, msg);
+        }
+
+        private void BringToFront()
+        {
+            _mainForm.Invoke(new MethodInvoker(delegate ()
+            {
+                _mainForm.Activate();
+            }));
+        }
+
+        private void ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            Logging.UpdateProgressBar(_mainForm, e.ProgressPercentage);
         }
 
         private void MovingFileSuccess(string fileName)

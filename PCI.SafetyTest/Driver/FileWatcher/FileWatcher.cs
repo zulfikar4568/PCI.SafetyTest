@@ -11,20 +11,21 @@ namespace PCI.SafetyTest.Driver
 {
     public interface IFileWatcher<T, F>
     {
-        void Init();
+        void Init(Main mainForm);
         void Exit();
     }
     public class FileWatcher<T, F> : IFileWatcher<T, F> where T : UseCase.Abstraction.IUseCase where F : BaseFileWatcherInstance
     {
         private readonly F _watcher;
         private readonly T _usecase;
+        private Main _mainForm;
 
         public FileWatcher(F watcher, T usecase)
         {
             _watcher = watcher;
             _usecase = usecase;
         }
-        public void Init()
+        public void Init(Main mainForm)
         {
             _watcher.Instance.NotifyFilter = NotifyFilters.Attributes
                                  | NotifyFilters.CreationTime
@@ -42,6 +43,8 @@ namespace PCI.SafetyTest.Driver
 
             _watcher.Instance.Filter = _watcher.patternFile();
             _watcher.Instance.EnableRaisingEvents = true;
+
+            _mainForm = mainForm;
         }
         public void Exit()
         {
@@ -59,7 +62,7 @@ namespace PCI.SafetyTest.Driver
             #endif
             EventLogUtil.LogEvent($"Changed: {e.FullPath}", System.Diagnostics.EventLogEntryType.Information);
             _watcher.Instance.EnableRaisingEvents = false;
-            _usecase.MainLogic(",", e.FullPath);
+            _usecase.MainLogic(",", e.FullPath, _mainForm);
             _watcher.Instance.EnableRaisingEvents = true;
         }
 

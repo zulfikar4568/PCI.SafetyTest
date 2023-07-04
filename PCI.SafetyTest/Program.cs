@@ -16,6 +16,9 @@ namespace PCI.SafetyTest
         [STAThread]
         static void Main()
         {
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+
             // Check Connection
             bool status = Bootstrapper.CheckConnection();
             if (!status)
@@ -26,9 +29,7 @@ namespace PCI.SafetyTest
             // Dependency injection
             var containerBuilder = Bootstrapper.DependencyInjectionBuilder(new ContainerBuilder());
             var container = containerBuilder.Build();
-
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
+            var serviceMain = container.Resolve<ServiceMain>();
 
             // Setup the MainForm
             var mainForm = container.Resolve<Main>();
@@ -37,11 +38,13 @@ namespace PCI.SafetyTest
 
             var scheduler = container.Resolve<Scheduler>();
             Application.ApplicationExit += new EventHandler(scheduler.StopCronJob);
+            Application.ApplicationExit += new EventHandler(serviceMain.Stop);
 
             // Add data to CheckConnectionJob
             scheduler.jobData.Add(typeof(Job.CheckConnectionJob).Name, mainForm);
             // Start the CronJob
             scheduler.StartCronJob();
+            serviceMain.Start(mainForm);
 
             Application.Run(mainForm);
         }

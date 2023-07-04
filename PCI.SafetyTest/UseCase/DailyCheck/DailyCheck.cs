@@ -16,7 +16,7 @@ namespace PCI.SafetyTest.UseCase
 {
     public interface IDailyCheck : Abstraction.IUseCase
     {
-        new void MainLogic(string delimiter, string sourceFile);
+        new void MainLogic(string delimiter, string sourceFile, Main mainForm);
     }
     public class DailyCheck : IDailyCheck
     {
@@ -43,7 +43,7 @@ namespace PCI.SafetyTest.UseCase
             }
         }
 
-        public void MainLogic(string delimiter, string sourceFile)
+        public void MainLogic(string delimiter, string sourceFile, Main mainForm)
         {
             if (!_processFile.IsFileExists(sourceFile)) return;
 

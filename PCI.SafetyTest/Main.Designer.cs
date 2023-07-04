@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Main));
             this.panelMain = new System.Windows.Forms.Panel();
             this.labelVersion = new System.Windows.Forms.LinkLabel();
             this.iconStatusConnection = new FontAwesome.Sharp.IconButton();
@@ -128,7 +129,7 @@
             this.titleMsg.AutoSize = true;
             this.titleMsg.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.titleMsg.ForeColor = System.Drawing.Color.White;
-            this.titleMsg.Location = new System.Drawing.Point(12, 112);
+            this.titleMsg.Location = new System.Drawing.Point(12, 66);
             this.titleMsg.Name = "titleMsg";
             this.titleMsg.Size = new System.Drawing.Size(148, 41);
             this.titleMsg.TabIndex = 9;
@@ -137,14 +138,13 @@
             // labelMsg
             // 
             this.labelMsg.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.labelMsg.AutoSize = true;
             this.labelMsg.Font = new System.Drawing.Font("Segoe UI Semibold", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.labelMsg.ForeColor = System.Drawing.Color.White;
-            this.labelMsg.Location = new System.Drawing.Point(166, 122);
+            this.labelMsg.Location = new System.Drawing.Point(166, 76);
             this.labelMsg.Name = "labelMsg";
-            this.labelMsg.Size = new System.Drawing.Size(175, 28);
+            this.labelMsg.Size = new System.Drawing.Size(504, 72);
             this.labelMsg.TabIndex = 8;
-            this.labelMsg.Text = "Doing Transaction";
+            this.labelMsg.Text = "Ready!";
             // 
             // btnExit
             // 
@@ -186,6 +186,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(682, 273);
             this.Controls.Add(this.panelMain);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Main";
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "Form1";

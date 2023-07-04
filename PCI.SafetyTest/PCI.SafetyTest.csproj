@@ -138,6 +138,7 @@
     <Compile Include="Driver\Opcenter\MaintenanceTransaction.cs" />
     <Compile Include="Driver\Opcenter\ResourceTransaction.cs" />
     <Compile Include="Entity\DailyCheck.cs" />
+    <Compile Include="Entity\MainLogic.cs" />
     <Compile Include="Entity\SafetyTest.cs" />
     <Compile Include="Job\CheckConnectionJob.cs" />
     <Compile Include="Job\ConsoleLogProvider.cs" />
@@ -156,6 +157,7 @@
     <Compile Include="Repository\Repository.cs" />
     <Compile Include="Repository\SafetyTest\SafetyTest.cs" />
     <Compile Include="Scheduler.cs" />
+    <Compile Include="ServiceMain.cs" />
     <Compile Include="UseCase\Abstraction\UseCase.cs" />
     <Compile Include="UseCase\DailyCheck\DailyCheck.cs" />
     <Compile Include="UseCase\NetworkUseCase\CheckConnection.cs" />
