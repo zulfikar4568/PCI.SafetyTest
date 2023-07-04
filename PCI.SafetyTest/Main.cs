@@ -22,6 +22,7 @@ namespace PCI.SafetyTest
             InitializeComponent();
             #region UI_Constructor
             this.BackColor = Color.FromArgb(45, 45, 65);//Border color
+            Location = Screen.FromPoint(Cursor.Position).Bounds.Location;
 
             // Set the label version 
             labelVersion.Text = $"Copyright © 2023 by OpexCG | Version {Assembly.GetEntryAssembly().GetName().Version}";
@@ -29,7 +30,8 @@ namespace PCI.SafetyTest
             #endregion
 
             Rectangle workingArea = Screen.GetWorkingArea(this);
-            this.Location = new Point(0, workingArea.Bottom - Size.Height);
+            this.Location = new Point(workingArea.Right - Size.Width,
+                                      workingArea.Bottom - Size.Height);
         }
         //Overrride methods
         protected override void WndProc(ref Message m)

@@ -119,9 +119,9 @@
             this.label1.ForeColor = System.Drawing.Color.White;
             this.label1.Location = new System.Drawing.Point(123, 12);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(396, 54);
+            this.label1.Size = new System.Drawing.Size(463, 54);
             this.label1.TabIndex = 10;
-            this.label1.Text = "Safety Test Watcher";
+            this.label1.Text = "Safety Test Logger MES";
             // 
             // titleMsg
             // 

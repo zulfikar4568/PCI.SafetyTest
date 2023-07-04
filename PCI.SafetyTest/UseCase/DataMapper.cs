@@ -11,17 +11,9 @@ namespace PCI.SafetyTest.UseCase
 {
     public class DataMapper<T> where T : Entity.Base
     {
-        public float FilterTheValue(string value)
+        public string FilterTheValue(string value)
         {
-            string numberMatch = Regex.Match(value, @"\d+\.?\d*").Value;
-            if (float.TryParse(numberMatch, out float result))
-            {
-                return result;
-            }
-            else
-            {
-                return 0;
-            }
+            return Regex.Match(value, @"\d+\.?\d*").Value;
         }
 
         public Dictionary<int, float> GetLogValue(List<T> CompletedData)
@@ -32,7 +24,7 @@ namespace PCI.SafetyTest.UseCase
                 foreach (var data in CompletedData)
                 {
                     bool validateKey = int.TryParse(data.Step, out int isKeyOk);
-                    bool validateValue = float.TryParse(data.Value, out float isValueOk);
+                    bool validateValue = float.TryParse(FilterTheValue(data.Value), out float isValueOk);
                     if (data.Value != null && data.Value != "" && validateKey && validateValue)
                     {
                         results.Add(isKeyOk, isValueOk);

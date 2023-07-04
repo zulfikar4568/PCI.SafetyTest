@@ -1,16 +1,23 @@
 ﻿using Camstar.WCF.ObjectStack;
+using Camstar.WCF.Services;
 using PCI.SafetyTest.Config;
+using PCI.SafetyTest.Entity;
 using PCI.SafetyTest.Repository.Opcenter;
 using PCI.SafetyTest.Util;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Windows.Interop;
 
 namespace PCI.SafetyTest.UseCase
 {
@@ -23,88 +30,131 @@ namespace PCI.SafetyTest.UseCase
         private readonly Repository.IDailyCheck _repository;
         private readonly Util.IProcessFile _processFile;
         private readonly ResourceTransaction _resourceTransaction;
-        public DailyCheck(Repository.IDailyCheck repository, Util.IProcessFile processFile, ResourceTransaction resourceTransaction)
+        private BackgroundWorker _backgroundWorker;
+        private Main _mainForm;
+        private DataMapper<Entity.DailyCheck> _dataMapper;
+        public DailyCheck(Repository.IDailyCheck repository, Util.IProcessFile processFile, ResourceTransaction resourceTransaction, BackgroundWorker backgroundWorker, DataMapper<Entity.DailyCheck> dataMapper)
         {
             _repository = repository;
             _processFile = processFile;
             _resourceTransaction = resourceTransaction;
+            _backgroundWorker = backgroundWorker;
+            _dataMapper = dataMapper;
+
+            // Set Handler for Background Worker
+            _backgroundWorker.WorkerReportsProgress = true;
+            _backgroundWorker.DoWork += DoWork;
+            _backgroundWorker.RunWorkerCompleted += RunWorkerComplete;
+            _backgroundWorker.ProgressChanged += ProgressChanged;
         }
-        public float FilterTheValue(string value)
+
+        private void RunWorkerComplete(object sender, RunWorkerCompletedEventArgs e)
         {
-            string numberMatch = Regex.Match(value, @"\d+\.?\d*").Value;
-            float result;
-            if (float.TryParse(numberMatch, out result))
-            {
-                return result;
-            }
-            else
-            {
-                return 0;
-            }
+            Thread.Sleep(1500);
+            Logging.UpdateProgressBar(_mainForm, 0);
+            Logging.UpdateMessage(_mainForm, "Ready!");
         }
 
         public void MainLogic(string delimiter, string sourceFile, Main mainForm)
         {
             if (!_processFile.IsFileExists(sourceFile)) return;
+            _mainForm = mainForm;
 
-            List<Entity.DailyCheck> data = _repository.Reading(delimiter, sourceFile);
-            DataPointDetails[] dataPointModelling = _repository.GetDataCollectionList();
-            if (dataPointModelling.Length == 0) MovingFileFailed(System.IO.Path.GetFileName(sourceFile));
+            if (!_backgroundWorker.IsBusy) _backgroundWorker.RunWorkerAsync(new MainLogic() { Delimiter = delimiter, SourceFile = sourceFile });
+        }
+        private void DoWork(object sender, DoWorkEventArgs e)
+        {
+            BringToFront();
 
-            SortedDictionary<string, float> dataCollection = new SortedDictionary<string, float>();
-            foreach (var item in data)
+            BackgroundWorker worker = sender as BackgroundWorker;
+            // Do some Logic in here!
+            var mainLogicData = (MainLogic)e.Argument;
+            List<Entity.DailyCheck> data = _repository.Reading(mainLogicData.Delimiter, mainLogicData.SourceFile);
+            if (data.Count == 0) return;
+
+            worker.ReportProgress(10);
+
+            var serialNumber = System.IO.Path.GetFileNameWithoutExtension(mainLogicData.SourceFile);
+            worker.ReportProgress(20);
+
+            var csvDataInDictionary = _dataMapper.GetLogValue(data);
+            worker.ReportProgress(45);
+            Logging.UpdateMessage(_mainForm, $"Data CSV stored into dictionary got {csvDataInDictionary.Count}!");
+
+            var dataPointDetails = _dataMapper.CombineDataPoint(csvDataInDictionary, _repository.GetDataCollectionList());
+            worker.ReportProgress(70);
+            Logging.UpdateMessage(_mainForm, $"Combine data got {dataPointDetails.Length} combined and store in dictionary!");
+
+            // Status Field
+            string msg;
+            EventLogEntryType result;
+            if (dataPointDetails.Length > 0)
             {
-                dataCollection.Add(item.Step, FilterTheValue(item.Value));
-            }
-
-            // Modify the Data Point Object and send 
-            if (dataPointModelling.Length == dataCollection.Count)
-            {
-                int index = 0;
-                foreach (var dat in dataCollection)
-                {
-                    if (dataPointModelling[index] != null)
-                    {
-                        dataPointModelling[index].DataValue = dat.Value.ToString();
-                        #if DEBUG
-                         Console.WriteLine("Key: {0}, Value: {1}", dataPointModelling[index].DataName, dataPointModelling[index].DataValue);
-                        #endif
-                    }
-                    index++;
-                }
-
+                Logging.UpdateMessage(_mainForm, $"Doing Transaction for unit {serialNumber}");
                 try
                 {
-                    bool result = _resourceTransaction.ExecuteCollectResourceData(AppSettings.ResourceName, AppSettings.UserDataCollectionDailyCheckName, AppSettings.UserDataCollectionDailyCheckRevision, dataPointModelling);
-                    if (!result)
+                    bool txnResult = _resourceTransaction.ExecuteCollectResourceData(AppSettings.ResourceName, AppSettings.UserDataCollectionDailyCheckName, AppSettings.UserDataCollectionDailyCheckRevision, dataPointDetails);
+                    if (!txnResult)
                     {
-                        EventLogUtil.LogEvent("Retry Resource Data Collection x2", System.Diagnostics.EventLogEntryType.Information, 3);
-                        result = _resourceTransaction.ExecuteCollectResourceData(AppSettings.ResourceName, AppSettings.UserDataCollectionDailyCheckName, AppSettings.UserDataCollectionDailyCheckRevision, dataPointModelling);
-                        if (!result)
+                        Logging.UpdateMessage(_mainForm, $"Retry Resource Data Collection x2 for unit {serialNumber}");
+                        txnResult = _resourceTransaction.ExecuteCollectResourceData(AppSettings.ResourceName, AppSettings.UserDataCollectionDailyCheckName, AppSettings.UserDataCollectionDailyCheckRevision, dataPointDetails);
+                        if (!txnResult)
                         {
-                            EventLogUtil.LogEvent("Retry Resource Data Collection x3", System.Diagnostics.EventLogEntryType.Information, 3);
-                            result = _resourceTransaction.ExecuteCollectResourceData(AppSettings.ResourceName, AppSettings.UserDataCollectionDailyCheckName, AppSettings.UserDataCollectionDailyCheckRevision, dataPointModelling);
-                            if (!result) MovingFileFailed(System.IO.Path.GetFileName(sourceFile));
+                            Logging.UpdateMessage(_mainForm, $"Retry Resource Data Collection x3 for unit {serialNumber}");
+                            txnResult = _resourceTransaction.ExecuteCollectResourceData(AppSettings.ResourceName, AppSettings.UserDataCollectionDailyCheckName, AppSettings.UserDataCollectionDailyCheckRevision, dataPointDetails);
                         }
                     }
-                    if (result) EventLogUtil.LogEvent("Success when doing Transaction Resource Data Collection");
+
+                    if (txnResult)
+                    {
+                        result = EventLogEntryType.Information;
+                        msg = $"Success when doing Resource Data Collection {serialNumber}!";
+                    }
+                    else
+                    {
+                        result = EventLogEntryType.Error;
+                        msg = $"Failed when doing Resource Data Collection {serialNumber}!";
+                    }
                 }
                 catch (Exception ex)
                 {
                     ex.Source = AppSettings.AssemblyName == ex.Source ? MethodBase.GetCurrentMethod().Name : MethodBase.GetCurrentMethod().Name + "." + ex.Source;
                     EventLogUtil.LogErrorEvent(ex.Source, ex.Message);
+                    result = EventLogEntryType.Error;
+                    msg = "Please check event log in event viewer for error!";
                 }
-
             }
             else
             {
-                EventLogUtil.LogEvent("The Sending Resource Data Collection was cancelled, because the Configuration Modelling is different with the Csv file", System.Diagnostics.EventLogEntryType.Warning, 3);
+                result = EventLogEntryType.Warning;
+                msg = $"There's no data Model match for {serialNumber}!";
             }
 
-            // Logic Opcenter must be in here
-            dataCollection.Clear();
-            MovingFileSuccess(System.IO.Path.GetFileName(sourceFile));
-            if (!File.Exists(sourceFile)) _processFile.CreateEmtyCSVFile(sourceFile, new List<Entity.DailyCheck>());
+            if (result == EventLogEntryType.Error || result == EventLogEntryType.Warning)
+            {
+                MovingFileFailed(System.IO.Path.GetFileName(mainLogicData.SourceFile));
+            }
+            else
+            {
+                MovingFileSuccess(System.IO.Path.GetFileName(mainLogicData.SourceFile));
+            }
+
+            worker.ReportProgress(100);
+            Logging.TransactionLogging(result, _mainForm, msg);
+            if (!File.Exists(mainLogicData.SourceFile)) _processFile.CreateEmtyCSVFile(mainLogicData.SourceFile, new List<Entity.DailyCheck>());
+        }
+
+        private void BringToFront()
+        {
+            _mainForm.Invoke(new MethodInvoker(delegate ()
+            {
+                _mainForm.Activate();
+            }));
+        }
+
+        private void ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            Logging.UpdateProgressBar(_mainForm, e.ProgressPercentage);
         }
 
         private void MovingFileSuccess(string fileName)

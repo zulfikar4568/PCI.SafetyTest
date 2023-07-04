@@ -123,6 +123,7 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "FormAlert";
             this.Load += new System.EventHandler(this.FormAlert_Load);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FormAlert_KeyDown);
             ((System.ComponentModel.ISupportInitialize)(this.btnExit)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.PicAlertBox)).EndInit();
             this.ResumeLayout(false);

@@ -101,7 +101,6 @@ namespace PCI.SafetyTest.UseCase
                         {
                             Logging.UpdateMessage(_mainForm, $"Retry Collect Data x3 for unit {serialNumber}");
                             txnResult = _containerTransaction.ExecuteCollectData(serialNumber, AppSettings.UserDataCollectionSafetyTestName, AppSettings.UserDataCollectionSafetyTestRevision, dataPointDetails);
-                            if (!txnResult) MovingFileFailed(System.IO.Path.GetFileName(mainLogicData.SourceFile));
                         }
                     }
                     if (txnResult)
@@ -122,13 +121,19 @@ namespace PCI.SafetyTest.UseCase
                     result = EventLogEntryType.Error;
                     msg = "Please check event log in event viewer for error!";
                 }
-                MovingFileSuccess(System.IO.Path.GetFileName(mainLogicData.SourceFile));
             }
             else
             {
                 result = EventLogEntryType.Warning;
                 msg = $"There's no data Model match for {serialNumber}!";
+            }
+
+            if (result == EventLogEntryType.Error || result == EventLogEntryType.Warning)
+            {
                 MovingFileFailed(System.IO.Path.GetFileName(mainLogicData.SourceFile));
+            } else
+            {
+                MovingFileSuccess(System.IO.Path.GetFileName(mainLogicData.SourceFile));
             }
 
             worker.ReportProgress(100);

@@ -18,7 +18,7 @@ namespace PCI.SafetyTest.Repository
     public interface IDailyCheck
     {
         List<Entity.DailyCheck> Reading(string delimiter, string sourceFile);
-        DataPointDetails[] GetDataCollectionList();
+        Dictionary<int, DataPointDetails> GetDataCollectionList();
     }
     public class DailyCheck : IDailyCheck
     {
@@ -65,17 +65,30 @@ namespace PCI.SafetyTest.Repository
             return result;
         }
 
-        public DataPointDetails[] GetDataCollectionList()
+        public Dictionary<int, DataPointDetails> GetDataCollectionList()
         {
-            List<DataPointDetails> result = new List<DataPointDetails>();
+            Dictionary<int, DataPointDetails> results = new Dictionary<int, DataPointDetails>();
             var data = _maintenanceTransaction.GetUserDataCollectionDef(AppSettings.UserDataCollectionDailyCheckName, AppSettings.UserDataCollectionDailyCheckRevision);
-            if (data != null) {
+            if (data != null)
+            {
                 foreach (var dataPoint in data.DataPoints)
                 {
-                    result.Add(new DataPointDetails() { DataName = dataPoint.Name.ToString(), DataType = dataPoint.DataType });
+                    bool validateKey = int.TryParse(dataPoint.Name.ToString().Split('|')[0], out int isKeyOk);
+                    if (validateKey)
+                    {
+                        results.Add(isKeyOk, new DataPointDetails() { DataName = dataPoint.Name.ToString(), DataType = dataPoint.DataType });
+                    }
                 }
+                // Try logging
+                EventLogUtil.LogEvent($"User Data Collection Def {AppSettings.UserDataCollectionDailyCheckName} have: {data.DataPoints.Length} data from Opcenter!.\nAnd stored into dictionary: {results.Count} ", System.Diagnostics.EventLogEntryType.Information, 6);
             }
-            return result.ToArray();
+            else
+            {
+                // Try logging
+                EventLogUtil.LogEvent($"There's no data can't be retrieve from opcenter!", System.Diagnostics.EventLogEntryType.Warning, 6);
+            }
+
+            return results;
         }
     }
 }

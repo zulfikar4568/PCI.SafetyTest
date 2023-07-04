@@ -44,11 +44,11 @@ namespace PCI.SafetyTest.Util
                     break;
                 case EventLogEntryType.Warning:
                     UpdateMessage(mainForm, message, EventLogEntryType.Warning);
-                    ZIAlertBox.Success("Transaction Cancelled!", message);
+                    ZIAlertBox.Warning("Transaction Cancelled!", message);
                     break;
                 case EventLogEntryType.Error:
                     UpdateMessage(mainForm, message, EventLogEntryType.Error);
-                    ZIAlertBox.Success("Transaction Failed!", message);
+                    ZIAlertBox.Error("Transaction Failed!", message);
                     break;
                 default:
                     break;

@@ -16,6 +16,7 @@ namespace PCI.SafetyTest.Components
         public FormAlert()
         {
             InitializeComponent();
+            Location = Screen.FromPoint(Cursor.Position).Bounds.Location;
         }
 
         public Color BackColorAlertBox
@@ -51,7 +52,7 @@ namespace PCI.SafetyTest.Components
         private void PositionAlertBox()
         {
             Rectangle workingArea = Screen.GetWorkingArea(this);
-            this.Location = new Point(workingArea.Right - Size.Width - 20, workingArea.Bottom - Size.Height - 20);
+            this.Location = new Point(workingArea.Right - Size.Width - 20, workingArea.Bottom - Size.Height - 350);
         }
 
         private void FormAlert_Load(object sender, EventArgs e)
