@@ -32,14 +32,77 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Autofac, Version=7.0.1.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <HintPath>..\packages\Autofac.7.0.1\lib\netstandard2.0\Autofac.dll</HintPath>
+    </Reference>
+    <Reference Include="Autofac.Extras.Quartz, Version=9.0.0.0, Culture=neutral, PublicKeyToken=595f708ada5feacc, processorArchitecture=MSIL">
+      <HintPath>..\packages\Autofac.Extras.Quartz.9.0.0\lib\netstandard2.0\Autofac.Extras.Quartz.dll</HintPath>
+    </Reference>
+    <Reference Include="Camstar.Exceptions">
+      <HintPath>..\Camstar\Camstar.Exceptions.dll</HintPath>
+    </Reference>
+    <Reference Include="Camstar.Util">
+      <HintPath>..\Camstar\Camstar.Util.dll</HintPath>
+    </Reference>
+    <Reference Include="Camstar.WCFClient">
+      <HintPath>..\Camstar\Camstar.WCFClient.dll</HintPath>
+    </Reference>
+    <Reference Include="Camstar.WCFClientBase">
+      <HintPath>..\Camstar\Camstar.WCFClientBase.dll</HintPath>
+    </Reference>
+    <Reference Include="CsvHelper, Version=30.0.0.0, Culture=neutral, PublicKeyToken=8c4959082be5c823, processorArchitecture=MSIL">
+      <HintPath>..\packages\CsvHelper.30.0.1\lib\net47\CsvHelper.dll</HintPath>
+    </Reference>
     <Reference Include="FontAwesome.Sharp, Version=6.3.0.0, Culture=neutral, PublicKeyToken=d16d1e4e568ec10f, processorArchitecture=MSIL">
       <HintPath>..\packages\FontAwesome.Sharp.6.3.0\lib\net48\FontAwesome.Sharp.dll</HintPath>
     </Reference>
+    <Reference Include="InSiteXMLClient">
+      <HintPath>..\Camstar\InSiteXMLClient.dll</HintPath>
+    </Reference>
+    <Reference Include="JetBrains.Annotations, Version=4242.42.42.42, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
+      <HintPath>..\packages\JetBrains.Annotations.2022.3.1\lib\net20\JetBrains.Annotations.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=1.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Bcl.AsyncInterfaces.1.1.0\lib\net461\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Bcl.HashCode, Version=1.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Bcl.HashCode.1.0.0\lib\net461\Microsoft.Bcl.HashCode.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Logging.Abstractions, Version=2.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Logging.Abstractions.2.1.1\lib\netstandard2.0\Microsoft.Extensions.Logging.Abstractions.dll</HintPath>
+    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="Quartz, Version=3.6.2.0, Culture=neutral, PublicKeyToken=f6b8c98a402cc8a4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Quartz.3.6.2\lib\net472\Quartz.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Diagnostics.DiagnosticSource, Version=4.0.5.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Diagnostics.DiagnosticSource.4.7.1\lib\net46\System.Diagnostics.DiagnosticSource.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Memory, Version=4.0.1.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Memory.4.5.4\lib\net461\System.Memory.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.4.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.5.3\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.Remoting" />
+    <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Threading.Tasks.Extensions.4.5.2\lib\netstandard2.0\System.Threading.Tasks.Extensions.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -53,6 +116,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Bootstrapper.cs" />
     <Compile Include="Components\FormAlert.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -63,6 +127,20 @@
     <Compile Include="Components\ZIEllipseControl.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Config\AppSettings.cs" />
+    <Compile Include="Driver\Driver.cs" />
+    <Compile Include="Driver\FileWatcherInstance\Abstraction\BaseFileWatcherInstance.cs" />
+    <Compile Include="Driver\FileWatcherInstance\DailyCheckFileWatcherInstance.cs" />
+    <Compile Include="Driver\FileWatcherInstance\SafetyTestFileWatcherInstance.cs" />
+    <Compile Include="Driver\FileWatcher\FileWatcher.cs" />
+    <Compile Include="Driver\Opcenter\ContainerTransaction.cs" />
+    <Compile Include="Driver\Opcenter\Helper.cs" />
+    <Compile Include="Driver\Opcenter\MaintenanceTransaction.cs" />
+    <Compile Include="Driver\Opcenter\ResourceTransaction.cs" />
+    <Compile Include="Entity\DailyCheck.cs" />
+    <Compile Include="Entity\SafetyTest.cs" />
+    <Compile Include="Job\CheckConnectionJob.cs" />
+    <Compile Include="Job\ConsoleLogProvider.cs" />
     <Compile Include="Main.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -71,6 +149,24 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repository\DailyCheck\DailyCheck.cs" />
+    <Compile Include="Repository\Opcenter\ContainerTransaction.cs" />
+    <Compile Include="Repository\Opcenter\MaintenanceTransaction.cs" />
+    <Compile Include="Repository\Opcenter\ResourceTransaction.cs" />
+    <Compile Include="Repository\Repository.cs" />
+    <Compile Include="Repository\SafetyTest\SafetyTest.cs" />
+    <Compile Include="Scheduler.cs" />
+    <Compile Include="UseCase\Abstraction\UseCase.cs" />
+    <Compile Include="UseCase\DailyCheck\DailyCheck.cs" />
+    <Compile Include="UseCase\NetworkUseCase\CheckConnection.cs" />
+    <Compile Include="UseCase\SafetyTest\SafetyTest.cs" />
+    <Compile Include="UseCase\UseCase.cs" />
+    <Compile Include="Util\EventLogUtil.cs" />
+    <Compile Include="Util\Logging.cs" />
+    <Compile Include="Util\NetUtil.cs" />
+    <Compile Include="Util\ProcessFile.cs" />
+    <Compile Include="Util\Simple3Des.cs" />
+    <Compile Include="Util\Util.cs" />
     <EmbeddedResource Include="Components\FormAlert.resx">
       <DependentUpon>FormAlert.cs</DependentUpon>
     </EmbeddedResource>
@@ -87,6 +183,10 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <None Include="app.manifest" />
+    <None Include="Endpoints.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -122,5 +222,6 @@
   <ItemGroup>
     <None Include="Resources\logoPCI.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

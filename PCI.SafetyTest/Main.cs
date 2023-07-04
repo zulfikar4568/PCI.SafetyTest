@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,6 +20,14 @@ namespace PCI.SafetyTest
         public Main()
         {
             InitializeComponent();
+            #region UI_Constructor
+            this.BackColor = Color.FromArgb(45, 45, 65);//Border color
+
+            // Set the label version 
+            labelVersion.Text = $"Copyright © 2023 by OpexCG | Version {Assembly.GetEntryAssembly().GetName().Version}";
+            labelVersion.LinkBehavior = LinkBehavior.NeverUnderline;
+            #endregion
+
             Rectangle workingArea = Screen.GetWorkingArea(this);
             this.Location = new Point(workingArea.Right - Size.Width,
                                       workingArea.Bottom - Size.Height);
@@ -111,7 +120,25 @@ namespace PCI.SafetyTest
         private extern static void ReleaseCapture();
         [DllImport("user32.DLL", EntryPoint = "SendMessage")]
         private extern static void SendMessage(System.IntPtr hWnd, int wMsg, int wParam, int lParam);
-
+        //Methods
+        public void SetNetworkConnected()
+        {
+#if DEBUG
+            Console.WriteLine($"Connected!");
+#endif
+            iconStatusConnection.IconColor = Color.GreenYellow;
+            iconStatusConnection.ForeColor = Color.GreenYellow;
+            iconStatusConnection.Text = "Connected";
+        }
+        public void SetNetworkNotConnected()
+        {
+#if DEBUG
+            Console.WriteLine($"Disconnected!");
+#endif
+            iconStatusConnection.IconColor = Color.Red;
+            iconStatusConnection.ForeColor = Color.Red;
+            iconStatusConnection.Text = "Disconnected";
+        }
         private void panelMain_MouseDown(object sender, MouseEventArgs e)
         {
             ReleaseCapture();
