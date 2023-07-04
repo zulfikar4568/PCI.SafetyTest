@@ -50,11 +50,11 @@ namespace PCI.SafetyTest.UseCase
         public float FilterTheValue(string value)
         {
             string numberMatch = Regex.Match(value, @"\d+\.?\d*").Value;
-            float result;
-            if (float.TryParse(numberMatch, out result))
+            if (float.TryParse(numberMatch, out float result))
             {
                 return result;
-            } else
+            }
+            else
             {
                 return 0;
             }
