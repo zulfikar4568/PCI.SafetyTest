@@ -9,15 +9,13 @@ using System.Threading.Tasks;
 
 namespace PCI.SafetyTest.Entity
 {
-    public class DailyCheck
+    public class DailyCheck : Base
     {
-        public string Step { get; set; }
         public string TestType { get; set; }
         public string ExpResult { get; set; }
         public string InstrResult { get; set; }
         public string FinalResult { get; set; }
         public string Meter1 { get; set; }
-        public string DataResult { get; set; }
         public string Meter3 { get; set; }
         public string Meter4 { get; set; }
         public string Meter5 { get; set; }
@@ -50,7 +48,7 @@ namespace PCI.SafetyTest.Entity
             Map(m => m.InstrResult ).Index(AppSettings.InstrResult);
             Map(m => m.FinalResult ).Index(AppSettings.FinalResult);
             Map(m => m.Meter1 ).Index(AppSettings.Meter1);
-            Map(m => m.DataResult ).Index(AppSettings.DataResult);
+            Map(m => m.Value ).Index(AppSettings.DataResult);
             Map(m => m.Meter3 ).Index(AppSettings.Meter3);
             Map(m => m.Meter4 ).Index(AppSettings.Meter4);
             Map(m => m.Meter5 ).Index(AppSettings.Meter5);

@@ -33,72 +33,20 @@ namespace PCI.SafetyTest.UseCase
         private readonly ContainerTransaction _containerTransaction;
         private BackgroundWorker _backgroundWorker;
         private Main _mainForm;
-        public SafetyTest(Repository.ISafetyTest repository, Util.IProcessFile processFile, ContainerTransaction containerTransaction, BackgroundWorker backgroundWorker)
+        private DataMapper<Entity.SafetyTest> _dataMapper;
+        public SafetyTest(Repository.ISafetyTest repository, Util.IProcessFile processFile, ContainerTransaction containerTransaction, BackgroundWorker backgroundWorker, DataMapper<Entity.SafetyTest> dataMapper)
         {
             _repository = repository;
             _processFile = processFile;
             _containerTransaction = containerTransaction;
             _backgroundWorker = backgroundWorker;
+            _dataMapper = dataMapper;
 
             // Set Handler for Background Worker
             _backgroundWorker.WorkerReportsProgress = true;
             _backgroundWorker.DoWork += DoWork;
             _backgroundWorker.RunWorkerCompleted += RunWorkerComplete;
             _backgroundWorker.ProgressChanged += ProgressChanged;
-        }
-
-        public float FilterTheValue(string value)
-        {
-            string numberMatch = Regex.Match(value, @"\d+\.?\d*").Value;
-            if (float.TryParse(numberMatch, out float result))
-            {
-                return result;
-            }
-            else
-            {
-                return 0;
-            }
-        }
-
-        public Dictionary<int, float> GetLogValue(List<Entity.SafetyTest> CompletedData)
-        {
-            Dictionary<int, float> results = new Dictionary<int, float>();
-            if (CompletedData.Count > 0)
-            {
-                foreach (var data in CompletedData)
-                {
-                    bool validateKey = int.TryParse(data.Step, out int isKeyOk);
-                    bool validateValue = float.TryParse(data.Value, out float isValueOk);
-                    if (data.Value != null && data.Value != "" &&  validateKey && validateValue)
-                    {
-                        results.Add(isKeyOk, isValueOk);
-                    }
-                }
-            }
-
-            // Try logging
-            Logging.UpdateMessage(_mainForm, $"Data CSV stored into dictionary got {results.Count}!");
-
-            return results;
-        }
-
-        private DataPointDetails[] CombineDataPoint(Dictionary<int, float> LogValue, Dictionary<int, DataPointDetails> ModellingValue)
-        {
-            List<DataPointDetails> dataPointDetails = new List<DataPointDetails>();
-            foreach (KeyValuePair<int, DataPointDetails> dataModel in ModellingValue)
-            {
-                if (LogValue.ContainsKey(dataModel.Key))
-                {
-                    var dataFill = dataModel.Value;
-                    dataFill.DataValue = LogValue[dataModel.Key].ToString();
-                    dataPointDetails.Add(dataFill);
-                }
-            }
-
-            // Try logging
-            Logging.UpdateMessage(_mainForm, $"Combine data got {dataPointDetails.Count} combined and store in dictionary!");
-
-            return dataPointDetails.ToArray();
         }
 
         public void MainLogic(string delimiter, string sourceFile, Main mainForm)
@@ -128,16 +76,17 @@ namespace PCI.SafetyTest.UseCase
             var serialNumber = System.IO.Path.GetFileNameWithoutExtension(mainLogicData.SourceFile);
             worker.ReportProgress(20);
 
-            var csvDataInDictionary = GetLogValue(data);
+            var csvDataInDictionary = _dataMapper.GetLogValue(data);
             worker.ReportProgress(45);
+            Logging.UpdateMessage(_mainForm, $"Data CSV stored into dictionary got {csvDataInDictionary.Count}!");
 
-            var dataPointDetails = CombineDataPoint(csvDataInDictionary, _repository.GetDataCollectionList());
+            var dataPointDetails = _dataMapper.CombineDataPoint(csvDataInDictionary, _repository.GetDataCollectionList());
             worker.ReportProgress(70);
-
+            Logging.UpdateMessage(_mainForm, $"Combine data got {dataPointDetails.Length} combined and store in dictionary!");
+            
             // Status Field
-            EventLogEntryType result = EventLogEntryType.Error;
             string msg;
-
+            EventLogEntryType result;
             if (dataPointDetails.Length > 0)
             {
                 Logging.UpdateMessage(_mainForm, $"Doing Transaction for unit {serialNumber}");
@@ -159,7 +108,8 @@ namespace PCI.SafetyTest.UseCase
                     {
                         result = EventLogEntryType.Information;
                         msg = $"Success when doing Transaction Collect Data {serialNumber}";
-                    } else
+                    }
+                    else
                     {
                         result = EventLogEntryType.Error;
                         msg = $"Failed when doing Transaction Collect Data {serialNumber}";

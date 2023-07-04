@@ -1,10 +1,5 @@
 ﻿using Autofac;
-using PCI.SafetyTest.UseCase;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using PCI.SafetyTest.Entity;
 
 namespace PCI.SafetyTest.UseCase
 {
@@ -15,6 +10,8 @@ namespace PCI.SafetyTest.UseCase
             moduleBuilder.RegisterType<SafetyTest>().As<ISafetyTest>();
             moduleBuilder.RegisterType<DailyCheck>().As<IDailyCheck>();
             moduleBuilder.RegisterType<CheckConnection>().AsSelf();
+            moduleBuilder.RegisterType<DataMapper<Entity.SafetyTest>>().AsSelf();
+            moduleBuilder.RegisterType<DataMapper<Entity.DailyCheck>>().AsSelf();
         }
     }
 }

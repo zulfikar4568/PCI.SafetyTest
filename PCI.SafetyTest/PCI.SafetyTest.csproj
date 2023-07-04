@@ -137,6 +137,7 @@
     <Compile Include="Driver\Opcenter\Helper.cs" />
     <Compile Include="Driver\Opcenter\MaintenanceTransaction.cs" />
     <Compile Include="Driver\Opcenter\ResourceTransaction.cs" />
+    <Compile Include="Entity\Base.cs" />
     <Compile Include="Entity\DailyCheck.cs" />
     <Compile Include="Entity\MainLogic.cs" />
     <Compile Include="Entity\SafetyTest.cs" />
@@ -160,6 +161,7 @@
     <Compile Include="ServiceMain.cs" />
     <Compile Include="UseCase\Abstraction\UseCase.cs" />
     <Compile Include="UseCase\DailyCheck\DailyCheck.cs" />
+    <Compile Include="UseCase\DataMapper.cs" />
     <Compile Include="UseCase\NetworkUseCase\CheckConnection.cs" />
     <Compile Include="UseCase\SafetyTest\SafetyTest.cs" />
     <Compile Include="UseCase\UseCase.cs" />

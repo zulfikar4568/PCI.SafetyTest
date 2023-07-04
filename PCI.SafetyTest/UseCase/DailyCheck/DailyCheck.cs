@@ -54,7 +54,7 @@ namespace PCI.SafetyTest.UseCase
             SortedDictionary<string, float> dataCollection = new SortedDictionary<string, float>();
             foreach (var item in data)
             {
-                dataCollection.Add(item.Step, FilterTheValue(item.DataResult));
+                dataCollection.Add(item.Step, FilterTheValue(item.Value));
             }
 
             // Modify the Data Point Object and send 

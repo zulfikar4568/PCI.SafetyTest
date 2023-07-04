@@ -93,7 +93,6 @@ namespace PCI.SafetyTest.Repository
                 EventLogUtil.LogEvent($"There's no data can't be retrieve from opcenter!", System.Diagnostics.EventLogEntryType.Warning, 6);
             }
 
-
             return results;
         }
     }

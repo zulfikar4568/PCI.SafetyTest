@@ -9,13 +9,7 @@ using PCI.SafetyTest.Config;
 
 namespace PCI.SafetyTest.Entity
 {
-    public class SafetyTest
-    {
-        [Index(0)]
-        public string Step { get; set; }
-        [Index(1)]
-        public string Value { get; set; }
-    }
+    public class SafetyTest : Base { }
 
     public sealed class SafetyTestMap : ClassMap<SafetyTest>
     {
