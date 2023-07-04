@@ -1,5 +1,4 @@
 ﻿using Autofac;
-using PCI.SafetyTest.Entity;
 
 namespace PCI.SafetyTest.UseCase
 {

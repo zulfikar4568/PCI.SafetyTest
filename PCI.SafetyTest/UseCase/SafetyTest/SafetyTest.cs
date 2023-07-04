@@ -1,23 +1,13 @@
-﻿using Camstar.WCF.ObjectStack;
-using Camstar.WCF.Services;
-using PCI.SafetyTest.Components;
-using PCI.SafetyTest.Config;
+﻿using PCI.SafetyTest.Config;
 using PCI.SafetyTest.Entity;
 using PCI.SafetyTest.Repository.Opcenter;
 using PCI.SafetyTest.Util;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace PCI.SafetyTest.UseCase

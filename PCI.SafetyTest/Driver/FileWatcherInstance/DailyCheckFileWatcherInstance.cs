@@ -1,11 +1,6 @@
 ﻿using PCI.SafetyTest.Config;
 using PCI.SafetyTest.Util;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PCI.SafetyTest.Driver.FileWatcherInstance
 {

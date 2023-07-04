@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CsvHelper.Configuration;
-using CsvHelper.Configuration.Attributes;
+﻿using CsvHelper.Configuration;
 using PCI.SafetyTest.Config;
 
 namespace PCI.SafetyTest.Entity
@@ -16,7 +10,7 @@ namespace PCI.SafetyTest.Entity
         public SafetyTestMap()
         {
             Map(m => m.Step).Index(AppSettings.StepST);
-            Map(m => m.Value).Index(AppSettings.Value);
+            Map(m => m.Value).Index(AppSettings.ValueST);
         }
     }
 }

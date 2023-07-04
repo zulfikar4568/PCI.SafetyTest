@@ -1,13 +1,6 @@
 ﻿using Camstar.WCF.ObjectStack;
 using Camstar.WCF.Services;
 using PCI.SafetyTest.Config;
-using PCI.SafetyTest.Driver.Opcenter;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Remoting.Messaging;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PCI.SafetyTest.Repository.Opcenter
 {
