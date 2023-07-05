@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using PCI.SafetyTest.Components;
+using PCI.SafetyTest.Config;
 using System;
 using System.Windows.Forms;
 
@@ -15,6 +16,12 @@ namespace PCI.SafetyTest
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+
+            if (AppSettings.PasswordSafetyTest != "")
+            {
+                FormPassword formPassword = new FormPassword("Please input the password to use the application!", ModePasswordForm.In);
+                formPassword.ShowDialog();
+            }
 
             // Check Connection
             bool status = Bootstrapper.CheckConnection();

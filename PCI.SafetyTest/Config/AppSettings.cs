@@ -223,5 +223,19 @@ namespace PCI.SafetyTest.Config
             }
         }
         #endregion
+
+        #region PASSWORD SAFETY TEST
+        public static string PasswordSafetyTest
+        {
+            get
+            {
+
+                Simple3Des oSimple3Des = new Simple3Des(ConfigurationManager.AppSettings["ExCorePasswordKey"]);
+                var realPassword = ConfigurationManager.AppSettings["PasswordSafetyTest"];
+                if (realPassword != "") return oSimple3Des.DecryptData(realPassword);
+                else return "";
+            }
+        }
+        #endregion
     }
 }
