@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
@@ -11,7 +12,7 @@ namespace PCI.SafetyTest.Util
     public interface IProcessFile
     {
         bool IsFileExists(string sourceFile);
-        void CreateEmtyCSVFile<T>(string defaultFileName, List<T> records);
+        void CreateEmtyCSVFile(string defaultFileName);
         void CheckAndCreateDirectory(string sourceFolder);
         bool BackupTheFile(string sourceFiles, string destinationFiles);
         bool MoveTheFile(string sourceFiles, string destinationFiles);
@@ -52,12 +53,12 @@ namespace PCI.SafetyTest.Util
 
             return true;
         }
-        public void CreateEmtyCSVFile<T>(string sourceFile,List<T> records)
+        public void CreateEmtyCSVFile(string sourceFile)
         {
             using (var writer = new StreamWriter(sourceFile))
             using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
             {
-                csv.WriteRecords(records);
+                csv.WriteRecords(new List<dynamic>());
             }
         }
         public bool MoveTheFile(string sourceFiles, string destinationFiles)
