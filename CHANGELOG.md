@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [versionize](https://github.com/versionize/versionize) for commit guidelines.
 
+<a name="2.1.0"></a>
+## [2.1.0](https://www.github.com/zulfikar4568/PCI.SafetyTest/releases/tag/v2.1.0) (2023-7-5)
+
+### Features
+
+* add password authenticator ([4b76c12](https://www.github.com/zulfikar4568/PCI.SafetyTest/commit/4b76c12a075019e67538a22a0eb5d5bb30c06511))
+
+### Bug Fixes
+
+* create empty file ([4da10ff](https://www.github.com/zulfikar4568/PCI.SafetyTest/commit/4da10ff9adc3dc61b50930fc8c07dc04b3cbd818))
+* form position ([c1208fe](https://www.github.com/zulfikar4568/PCI.SafetyTest/commit/c1208fee16c6f02a598c2c0cd919ec4d0672c9db))
+
+### Other
+
+* Merge pull request #1 from zulfikar4568/feat/dev ([137c567](https://www.github.com/zulfikar4568/PCI.SafetyTest/commit/137c567aedb0aa5aaa37b7bfe7c492ad31c5e597))
+* **update:** v2.0.0 push to the AssemblyInfo.cs ([2c92b12](https://www.github.com/zulfikar4568/PCI.SafetyTest/commit/2c92b1294b76fb4712fc3be302fa159c95951f13))
+
 <a name="2.0.0"></a>
 ## [2.0.0](https://www.github.com/zulfikar4568/PCI.SafetyTest/releases/tag/v2.0.0) (2023-7-4)
 
