@@ -20,8 +20,12 @@ namespace PCI.SafetyTest
             // Set the label version 
             labelVersion.Text = $"Copyright © 2023 by OpexCG | Version {Assembly.GetEntryAssembly().GetName().Version}";
             labelVersion.LinkBehavior = LinkBehavior.NeverUnderline;
+            
+            SetBottomRight();
             #endregion
-
+        }
+        public void SetBottomRight()
+        {
             Rectangle workingArea = Screen.GetWorkingArea(this);
             this.Location = new Point(workingArea.Right - Size.Width,
                                       workingArea.Bottom - Size.Height);
@@ -142,11 +146,6 @@ namespace PCI.SafetyTest
         private void btnExit_Click(object sender, EventArgs e)
         {
             Application.Exit();
-        }
-
-        private void btnMinimize_Click(object sender, EventArgs e)
-        {
-            WindowState = FormWindowState.Minimized;
         }
 
         private void Main_Load(object sender, EventArgs e)
