@@ -134,7 +134,10 @@ namespace PCI.SafetyTest.UseCase
         {
             _mainForm.Invoke(new MethodInvoker(delegate ()
             {
-                _mainForm.Activate();
+                _mainForm.TopMost = true;
+                _mainForm.Focus();
+                _mainForm.BringToFront();
+                _mainForm.TopMost = false;
             }));
         }
 

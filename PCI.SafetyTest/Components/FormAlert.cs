@@ -46,7 +46,7 @@ namespace PCI.SafetyTest.Components
         private void PositionAlertBox()
         {
             Rectangle workingArea = Screen.GetWorkingArea(this);
-            this.Location = new Point(workingArea.Right - Size.Width - 20, workingArea.Bottom - Size.Height - 350);
+            this.Location = new Point(workingArea.Right - Size.Width - 20, workingArea.Top + 20);
         }
 
         private void FormAlert_Load(object sender, EventArgs e)

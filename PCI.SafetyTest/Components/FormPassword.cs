@@ -1,42 +1,31 @@
-﻿using PCI.SafetyTest.Components;
-using PCI.SafetyTest.Config;
+﻿using PCI.SafetyTest.Config;
 using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
 using System.Drawing;
-using System.Reflection;
+using System.Linq;
 using System.Runtime.InteropServices;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace PCI.SafetyTest
+namespace PCI.SafetyTest.Components
 {
-    public partial class Main : Form
+    public partial class FormPassword : Form
     {
+        private ModePasswordForm _mode;
         private Size formSize; //Keep form size when it is minimized and restored.Since the form is resized because it takes into account the size of the title bar and borders.
-
-        public Main()
+        public FormPassword(string message, ModePasswordForm mode)
         {
             InitializeComponent();
-            // Set Position and Size
-            this.Size = new Size(700, 320);
-            progressBar.Size = new Size(658, 38);
-            progressBar.Location = new Point(12, 165);
-            labelMsg.Location = new Point(166, 76);
-            labelMsg.Size = new Size(504, 72);
-            titleMsg.Location = new Point(12, 66);
-            labelVersion.Location = new Point(467, 252);
-            btnExit.Location = new Point(650, 12);
-            btnExit.Size = new Size(20, 20);
-            iconStatusConnection.Location = new Point(3, 216);
-
-            #region UI_Constructor
-            this.BackColor = Color.FromArgb(45, 45, 65);//Border color
             Location = Screen.FromPoint(Cursor.Position).Bounds.Location;
+            btnExit.Size = new Size(20, 20);
 
-            // Set the label version 
-            labelVersion.Text = $"Copyright © 2023 by OpexCG | Version {Assembly.GetEntryAssembly().GetName().Version}";
-            labelVersion.LinkBehavior = LinkBehavior.NeverUnderline;
-            
+            titleMsg.Text = message;
+            _mode = mode;
+
             SetBottomRight();
-            #endregion
         }
         public void SetBottomRight()
         {
@@ -132,55 +121,53 @@ namespace PCI.SafetyTest
         private extern static void ReleaseCapture();
         [DllImport("user32.DLL", EntryPoint = "SendMessage")]
         private extern static void SendMessage(System.IntPtr hWnd, int wMsg, int wParam, int lParam);
-        //Methods
-        public void SetNetworkConnected()
+
+        private void buttonLogin_Click(object sender, EventArgs e)
         {
-#if DEBUG
-            Console.WriteLine($"Connected!");
-#endif
-            iconStatusConnection.IconColor = Color.GreenYellow;
-            iconStatusConnection.ForeColor = Color.GreenYellow;
-            iconStatusConnection.Text = "Connected";
+            ProceedTheAuthentication();
         }
-        public void SetNetworkNotConnected()
+
+        private void ProceedTheAuthentication()
         {
-#if DEBUG
-            Console.WriteLine($"Disconnected!");
-#endif
-            iconStatusConnection.IconColor = Color.Red;
-            iconStatusConnection.ForeColor = Color.Red;
-            iconStatusConnection.Text = "Disconnected";
+            if (_mode == ModePasswordForm.Out && Authenticate(textBoxPassword.Text)) Application.Exit();
+            else if ((_mode == ModePasswordForm.In || _mode == ModePasswordForm.Out) && !Authenticate(textBoxPassword.Text)) ZIAlertBox.Error("Authentication", "Wrong Password!");
+            else if (_mode == ModePasswordForm.In && Authenticate(textBoxPassword.Text)) this.Close();
         }
-        private void panelMain_MouseDown(object sender, MouseEventArgs e)
+
+        private bool Authenticate(string Password)
         {
-            ReleaseCapture();
-            SendMessage(this.Handle, 0x112, 0xf012, 0);
+            var result = Password == AppSettings.PasswordSafetyTest ?  true : false;
+            return result;
         }
 
         private void btnExit_Click(object sender, EventArgs e)
         {
-            if (AppSettings.PasswordSafetyTest != "")
+            if (_mode == ModePasswordForm.In) Application.Exit();
+            this.Close();
+        }
+
+        private void textBoxPassword_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
             {
-                FormPassword formPassword = new FormPassword("Please input the password to exit application!", ModePasswordForm.Out);
-                formPassword.ShowDialog();
-            } else
-            {
-                Application.Exit();
+                ProceedTheAuthentication();
             }
         }
 
-        private void Main_Load(object sender, EventArgs e)
+        private void FormPassword_Load(object sender, EventArgs e)
         {
             formSize = this.ClientSize;
         }
 
-        public void SetProgressBar(int value)
+        private void panel1_MouseDown(object sender, MouseEventArgs e)
         {
-            progressBar.Value = value;
+            ReleaseCapture();
+            SendMessage(this.Handle, 0x112, 0xf012, 0);
         }
-        public void SetLabelMessage(string message)
-        {
-            labelMsg.Text = message;
-        }
+    }
+    public enum ModePasswordForm
+    {
+        In,
+        Out
     }
 }

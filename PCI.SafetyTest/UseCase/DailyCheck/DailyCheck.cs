@@ -133,14 +133,17 @@ namespace PCI.SafetyTest.UseCase
 
             worker.ReportProgress(100);
             Logging.TransactionLogging(result, _mainForm, msg);
-            if (!File.Exists(mainLogicData.SourceFile)) _processFile.CreateEmtyCSVFile(mainLogicData.SourceFile, new List<Entity.DailyCheck>());
+            if (!File.Exists(mainLogicData.SourceFile)) _processFile.CreateEmtyCSVFile(mainLogicData.SourceFile);
         }
 
         private void BringToFront()
         {
             _mainForm.Invoke(new MethodInvoker(delegate ()
             {
-                _mainForm.Activate();
+                _mainForm.TopMost = true;
+                _mainForm.Focus();
+                _mainForm.BringToFront();
+                _mainForm.TopMost = false;
             }));
         }
 
