@@ -5,6 +5,11 @@
   <a href="https://github.com/zulfikar4568/PCI.SafetyTest/blob/master/LICENSE"><img src="https://img.shields.io/github/license/zulfikar4568/PCI.SafetyTest.svg" /></a>
 </h1>
 
+<h1 align="center">
+  <img src="https://github.com/zulfikar4568/PCI.SafetyTest/assets/64786139/6db3340e-97e5-47b8-8925-efefd69a700b"/>
+  <img src="https://github.com/zulfikar4568/PCI.SafetyTest/assets/64786139/46d8024c-7d04-4e29-8eca-106b1483ceda"/>
+</h1>
+
 # Some Notes
 ```
 There's no interlock beetwen tester and MES, let records depend on how many tester doing the test (Actual whether 3x test even more), and operator click Complete if result is pass, and click Rework Request if result is fail (Let Operator will aknowledge that container moved to the Image Test or to rework).
